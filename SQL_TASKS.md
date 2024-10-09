@@ -39,9 +39,9 @@ Step 2: Insert sample data into the tables
 -- Insert sample data into the 'customers' table
 INSERT INTO customers (name, email, address)
 VALUES 
-('Alice Johnson', 'alice@example.com', '123 Maple Street'),
-('Bob Smith', 'bob@example.com', '456 Oak Avenue'),
-('Charlie Brown', 'charlie@example.com', '789 Pine Road');
+('Syed Suhail', 'syed@example.com', '123 Maple Street'),
+('Arun Kumar', 'arun@example.com', '456 Oak Avenue'),
+('John Abraham ', 'john@example.com', '789 Pine Road');
 
 -- Insert sample data into the 'orders' table
 INSERT INTO orders (customer_id, order_date, total_amount)
@@ -145,8 +145,3 @@ Orders greater than 150.00: Retrieves all orders with a total amount greater tha
 Normalization of orders and products relationship: A new table order_items is created to break down each order into individual products, following normalization practices.
 
 Average total of orders: Calculates the average total amount of all orders in the system.
-
-
-
-
-
