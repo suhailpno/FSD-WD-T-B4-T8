@@ -1,0 +1,152 @@
+SQL TASKS
+
+Step 1: Create the database and tables
+
+-- Create the 'ecommerce' database
+CREATE DATABASE ecommerce;
+
+-- Use the 'ecommerce' database
+USE ecommerce;
+
+-- Create the 'customers' table
+CREATE TABLE customers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100),
+    address VARCHAR(255)
+);
+
+-- Create the 'orders' table
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    order_date DATE,
+    total_amount DECIMAL(10, 2),
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
+);
+
+-- Create the 'products' table
+CREATE TABLE products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    price DECIMAL(10, 2),
+    description TEXT
+);
+
+
+Step 2: Insert sample data into the tables
+
+-- Insert sample data into the 'customers' table
+INSERT INTO customers (name, email, address)
+VALUES 
+('Alice Johnson', 'alice@example.com', '123 Maple Street'),
+('Bob Smith', 'bob@example.com', '456 Oak Avenue'),
+('Charlie Brown', 'charlie@example.com', '789 Pine Road');
+
+-- Insert sample data into the 'orders' table
+INSERT INTO orders (customer_id, order_date, total_amount)
+VALUES
+(1, '2024-09-20', 120.50),
+(2, '2024-10-05', 200.00),
+(1, '2024-10-01', 150.00);
+
+-- Insert sample data into the 'products' table
+INSERT INTO products (name, price, description)
+VALUES
+('Product A', 50.00, 'Description of Product A'),
+('Product B', 30.00, 'Description of Product B'),
+('Product C', 40.00, 'Description of Product C');
+
+Step 3: Queries
+
+-- 1. Retrieve all customers who have placed an order in the last 30 days
+SELECT DISTINCT c.name, c.email
+FROM customers c
+JOIN orders o ON c.id = o.customer_id
+WHERE o.order_date >= CURDATE() - INTERVAL 30 DAY;
+
+-- 2. Get the total amount of all orders placed by each customer
+SELECT c.name, SUM(o.total_amount) AS total_spent
+FROM customers c
+JOIN orders o ON c.id = o.customer_id
+GROUP BY c.name;
+
+-- 3. Update the price of Product C to 45.00
+UPDATE products
+SET price = 45.00
+WHERE name = 'Product C';
+
+-- 4. Add a new column 'discount' to the products table
+ALTER TABLE products
+ADD COLUMN discount DECIMAL(5, 2) DEFAULT 0.00;
+
+-- 5. Retrieve the top 3 products with the highest price
+SELECT name, price
+FROM products
+ORDER BY price DESC
+LIMIT 3;
+
+-- 6. Get the names of customers who have ordered Product A
+SELECT DISTINCT c.name
+FROM customers c
+JOIN orders o ON c.id = o.customer_id
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+WHERE p.name = 'Product A';
+
+-- 7. Join the orders and customers tables to retrieve the customer's name and order date for each order
+SELECT c.name, o.order_date
+FROM orders o
+JOIN customers c ON o.customer_id = c.id;
+
+-- 8. Retrieve the orders with a total amount greater than 150.00
+SELECT *
+FROM orders
+WHERE total_amount > 150.00;
+
+-- 9. Normalize the database by creating a separate table for order items and updating the orders table to reference the order_items table
+
+-- Create the 'order_items' table
+CREATE TABLE order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT,
+    product_id INT,
+    quantity INT,
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+
+-- Remove product-related columns from 'orders' table, now managed by 'order_items'
+-- (Since there's no need to store this in orders directly after normalization)
+
+-- 10. Retrieve the average total of all orders
+SELECT AVG(total_amount) AS average_order_total
+FROM orders;
+
+Explanation of Queries:
+
+Retrieve customers who placed an order in the last 30 days: This query finds all customers who placed an order in the last 30 days by joining the customers and orders tables and filtering by date.
+
+Total amount spent by each customer: Groups orders by customer and sums the total order amount.
+
+Update Product C price: Changes the price of 'Product C' to 45.00.
+
+Add discount column: Adds a discount column to the products table with a default value of 0.
+
+Top 3 most expensive products: Retrieves the three products with the highest prices.
+
+Customers who ordered Product A: Uses the order_items and products tables to identify customers who ordered 'Product A.'
+
+Join customers and orders: Retrieves the name of the customer and the order date for each order placed.
+
+Orders greater than 150.00: Retrieves all orders with a total amount greater than 150.00.
+
+Normalization of orders and products relationship: A new table order_items is created to break down each order into individual products, following normalization practices.
+
+Average total of orders: Calculates the average total amount of all orders in the system.
+
+
+
+
+
